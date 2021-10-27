@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "971922302982",
+    "project_id": "device-tracking-be619",
+    "storage_bucket": "device-tracking-be619.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:971922302982:android:f6499d7fc199ff18e93b87",
+        "android_client_info": {
+          "package_name": "com.example.devicetracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "971922302982-kbupgdrdhgvdt35gsremkhrk2bvklfut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE1MoR76nQhFpeRNOhIDYrbThG_4_Hue0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "971922302982-kbupgdrdhgvdt35gsremkhrk2bvklfut.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
