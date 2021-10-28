@@ -12,4 +12,7 @@
     <string name="assigned_user">Assigned User</string>
     <string name="search">Search</string>
     <string name="add">Add</string>
+    <string name="signout">SignOut</string>
+    <string name="assigned_users">Assigned Users</string>
+    <string name="add_user">Add User</string>
 </resources>

@@ -1,22 +1,13 @@
 package com.example.devicetracker.models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
 
     protected String id,email,password,lastLocation,userName;
-    private List<AssignedUser> assignedUser;
+    private Map<String,String> assignedUsers = new HashMap<>();
     public User() {
-    }
-
-    public User(String id, String email, String password, String lastLocation, String userName, List<AssignedUser> assignedUser) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.lastLocation = lastLocation;
-        this.userName = userName;
-        this.assignedUser = assignedUser;
     }
 
     public User(String id, String email, String password, String lastLocation, String userName) {
@@ -27,12 +18,21 @@ public class User {
         this.userName = userName;
     }
 
-    public List<AssignedUser> getAssignedUser() {
-        return assignedUser;
+    public User(String id, String email, String password, String lastLocation, String userName, Map<String, String> data) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.lastLocation = lastLocation;
+        this.userName = userName;
+        this.assignedUsers = data;
     }
 
-    public void setAssignedUser(List<AssignedUser> assignedUser) {
-        this.assignedUser = assignedUser;
+    public Map<String, String> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+    public void setAssignedUsers(Map<String, String> assignedUsers) {
+        this.assignedUsers = assignedUsers;
     }
 
     public String getId() {

@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -26,7 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -44,6 +47,7 @@ public class AddUserFragment extends Fragment {
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding= FragmentAddUserBinding.inflate(inflater,container,false);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
 
         databaseReference= FirebaseDatabase.getInstance().getReference("User");
         mAuth= FirebaseAuth.getInstance();
@@ -76,7 +80,7 @@ public class AddUserFragment extends Fragment {
         mBinding.addUserLayout.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getCurrentUserData();
+                updateCurrentUser();
 
 
             }
@@ -93,7 +97,7 @@ public class AddUserFragment extends Fragment {
 
                 for (DataSnapshot dataSnapshot:snapshot.getChildren())
                 {
-                    user= dataSnapshot.getValue(AssignedUser.class);
+                    user= dataSnapshot.getValue(User.class);
                     mBinding.addUserLayout.parentLayout.setVisibility(View.VISIBLE);
                     mBinding.addUserLayout.tvUsername.setText(user.getUserName());
                     mBinding.addUserLayout.tvUserEmail.setText(user.getEmail());
@@ -110,43 +114,26 @@ public class AddUserFragment extends Fragment {
 
     }
 
-    private void getCurrentUserData() {
+
+
+    private void updateCurrentUser( ) {
         String uID= mAuth.getUid();
+        String assignedUserID= user.getId();
+        Map<String,String> data = new HashMap<>();
+        data.put("userName",user.getUserName());
+        data.put("email",user.getEmail());
+        data.put("id",assignedUserID);
 
         assert uID != null;
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(uID).child("assignedUser");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot:snapshot.getChildren())
-                {
-                    assignedUser = (List<AssignedUser>) snapshot.getValue();
-//                    assignedUser.add(user);
-                    updateCurrentUser(assignedUser) ;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Add User: "," "+error.getMessage());
-
-            }
-        });
+        FirebaseDatabase databaseReference = FirebaseDatabase.getInstance();
 
 
-
-    }
-
-    private void updateCurrentUser(List<AssignedUser> assignedUser) {
-        String uID= mAuth.getUid();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child("AssignedUser").push();
-
-
-        databaseReference.setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+        databaseReference.getReference("Users").child(uID).child("assignedUser").child(assignedUserID).setValue(data).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
 
                 mBinding.addUserLayout.parentLayout.setVisibility(View.INVISIBLE);
+                mBinding.EditTextEmail.setText("");
             }
 
         });

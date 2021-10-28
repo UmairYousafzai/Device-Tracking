@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -43,6 +44,8 @@ public class LoginFragment extends Fragment {
         navController = NavHostFragment.findNavController(this);
         BottomNavigationView bottomNavigationView= requireActivity().findViewById(R.id.bottom_view);
         bottomNavigationView.setVisibility(View.GONE);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+
         return mBinding.getRoot();
     }
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -45,6 +46,7 @@ public class SignUpFragment extends Fragment {
         mBinding = FragmentSignUpBinding.inflate(inflater,container,false);
         BottomNavigationView bottomNavigationView= requireActivity().findViewById(R.id.bottom_view);
         bottomNavigationView.setVisibility(View.GONE);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
 
         return mBinding.getRoot();
     }
@@ -92,8 +94,6 @@ public class SignUpFragment extends Fragment {
                         if (task.isSuccessful())
                         {
                             List<AssignedUser> list= new ArrayList<>();
-                            list.add(new AssignedUser(" "," "," "," "," "));
-                            list.add(new AssignedUser(" "," "," "," "," "));
 
                             User user= new User(mAuth.getUid(),email,password," ",userName);
                             mDatabase.getReference().child("Users").child(Objects.requireNonNull(mAuth.getUid())).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
