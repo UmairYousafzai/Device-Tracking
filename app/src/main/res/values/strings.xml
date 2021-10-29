@@ -15,4 +15,6 @@
     <string name="signout">SignOut</string>
     <string name="assigned_users">Assigned Users</string>
     <string name="add_user">Add User</string>
+    <string name="location_requests">Location Requests</string>
+    <string name="status">Status:</string>
 </resources>

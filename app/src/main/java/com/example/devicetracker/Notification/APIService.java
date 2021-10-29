@@ -1,5 +1,7 @@
 package com.example.devicetracker.Notification;
 
+import com.google.gson.JsonObject;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -14,6 +16,6 @@ public interface APIService {
     )
 
     @POST("fcm/send")
-    Call<MyResponse> sendNotifcation(@Body NotificationSender body);
+    Call<MyResponse> sendNotifcation(@Body JsonObject payLoad);
 }
 

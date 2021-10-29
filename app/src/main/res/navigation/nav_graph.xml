@@ -65,4 +65,9 @@
             app:popExitAnim="@anim/slide_out_right"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/location_request"
+        android:name="com.example.devicetracker.LocationRequestsFragment"
+        android:label="fragment_location_requests"
+        tools:layout="@layout/fragment_location_requests" />
 </navigation>

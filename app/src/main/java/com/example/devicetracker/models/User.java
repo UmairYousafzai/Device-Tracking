@@ -6,6 +6,7 @@ import java.util.Map;
 public class User {
 
     protected String id,email,password,lastLocation,userName;
+    private boolean requestAccepted;
     private Map<String,String> assignedUsers = new HashMap<>();
     public User() {
     }
@@ -18,13 +19,22 @@ public class User {
         this.userName = userName;
     }
 
-    public User(String id, String email, String password, String lastLocation, String userName, Map<String, String> data) {
+    public User(String id, String email, String password, String lastLocation, String userName, boolean requestAccepted, Map<String, String> assignedUsers) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.lastLocation = lastLocation;
         this.userName = userName;
-        this.assignedUsers = data;
+        this.requestAccepted = requestAccepted;
+        this.assignedUsers = assignedUsers;
+    }
+
+    public boolean isRequestAccepted() {
+        return requestAccepted;
+    }
+
+    public void setRequestAccepted(boolean requestAccepted) {
+        this.requestAccepted = requestAccepted;
     }
 
     public Map<String, String> getAssignedUsers() {

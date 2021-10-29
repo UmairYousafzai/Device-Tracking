@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.devicetracker.Notification.SendNoticationClass;
 import com.example.devicetracker.databinding.UserCardBinding;
 import com.example.devicetracker.models.User;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUserRecyclerAdapter.AssignedUserViewHolder> {
 
@@ -26,10 +28,12 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
     public List<User> userList;
     private Context context;
     private SendNoticationClass sendNoticationClass = new SendNoticationClass();
+    private FirebaseAuth mAuth;
 
     public AssignedUserRecyclerAdapter(Context context) {
         userList = new ArrayList<>();
         this.context = context;
+        mAuth= FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -80,14 +84,15 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
                 public void onClick(View v) {
                     if (getAdapterPosition() != RecyclerView.NO_POSITION) {
                         User user = userList.get(getAdapterPosition());
-
+                        String senderUserEmail= Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                        String message= Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName()+" Want To Access Your Live Location.";
                         sendNoticationClass.UpdateToken();
                         FirebaseDatabase.getInstance().getReference().child("Tokens").child(user.getId()).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                String usertoken = dataSnapshot.getValue(String.class);
+                                String receiverUserToken = dataSnapshot.getValue(String.class);
 
-                                sendNoticationClass.sendNotifications(usertoken, "Device Tracker", "Allow Access to live location", context);
+                                sendNoticationClass.sendNotifications(receiverUserToken,senderUserEmail, "Device Tracker", message, context);
                             }
 
                             @Override

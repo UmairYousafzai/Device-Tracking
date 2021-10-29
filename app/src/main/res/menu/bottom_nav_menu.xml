@@ -17,4 +17,11 @@
         android:iconTint="@color/secondaryAppColor"
         app:showAsAction="always"
         />
+    <item
+        android:id="@+id/location_request"
+        android:title="Add User"
+        android:icon="@drawable/ic_list_svgrepo_com"
+        android:iconTint="@color/secondaryAppColor"
+        app:showAsAction="always"
+        />
 </menu>

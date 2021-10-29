@@ -1,14 +1,30 @@
 package com.example.devicetracker.Notification;
 
 public class NotificationSender {
-    public Data data;
+    public Data message;
     public String to;
 
-    public NotificationSender(Data data, String to) {
-        this.data = data;
+    public NotificationSender(Data message, String to) {
+        this.message = message;
         this.to = to;
     }
 
     public NotificationSender() {
+    }
+
+    public Data getMessage() {
+        return message;
+    }
+
+    public void setMessage(Data message) {
+        this.message = message;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 }
