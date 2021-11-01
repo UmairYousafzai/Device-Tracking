@@ -2,16 +2,20 @@ package com.example.devicetracker;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.devicetracker.databinding.ActivityMainBinding;
+import com.example.devicetracker.utils.Permission;
 import com.example.devicetracker.utils.SharedPreferenceHelper;
 
 import java.util.Objects;
@@ -35,6 +39,12 @@ public class MainActivity extends AppCompatActivity {
         navController = navHostFragment.getNavController();
         NavigationUI.setupWithNavController(mBinding.bottomView,navController);
 //        NavigationUI.setupWithNavController(mBinding.customToolbar,navController);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            Permission permission= new Permission(this,this);
+            permission.getLocationPermission();
+        }
     }
 
     @Override

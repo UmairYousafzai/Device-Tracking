@@ -1,11 +1,19 @@
 package com.example.devicetracker.models;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class User {
 
-    protected String id,email,password,lastLocation,userName;
+
+    protected String id;
+    protected String email;
+    protected String password;
+    protected String lastLocation;
+    protected String userName;
     private boolean requestAccepted;
     private Map<String,String> assignedUsers = new HashMap<>();
     public User() {

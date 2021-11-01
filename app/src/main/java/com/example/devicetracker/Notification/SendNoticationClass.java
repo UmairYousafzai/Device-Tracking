@@ -50,7 +50,7 @@ public class SendNoticationClass {
         JsonObject data = new JsonObject();
         data.addProperty("title", title);
         data.addProperty("message", message);
-        data.addProperty("userId",senderEmail);
+        data.addProperty("email",senderEmail);
         // add data payload
         payload.add("data", data);
         apiService.sendNotifcation(payload).enqueue(new Callback<MyResponse>() {

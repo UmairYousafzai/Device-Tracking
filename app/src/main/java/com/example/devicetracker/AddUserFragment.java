@@ -123,6 +123,8 @@ public class AddUserFragment extends Fragment {
         data.put("userName",user.getUserName());
         data.put("email",user.getEmail());
         data.put("id",assignedUserID);
+        data.put("IsLocationSharing"," ");
+
 
         assert uID != null;
         FirebaseDatabase databaseReference = FirebaseDatabase.getInstance();

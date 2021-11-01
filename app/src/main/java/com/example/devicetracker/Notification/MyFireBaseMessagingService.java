@@ -11,17 +11,34 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Vibrator;
+import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.devicetracker.MainActivity;
 import com.example.devicetracker.R;
+import com.example.devicetracker.models.LocationSharingUser;
+import com.example.devicetracker.models.User;
+import com.example.devicetracker.utils.UserRepository;
+import com.example.devicetracker.utils.UserViewModel;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Objects;
+
 public class MyFireBaseMessagingService extends FirebaseMessagingService {
-    String title,message, senderEmail;
+    private UserRepository userRepository;
+    private LocationSharingUser user= new LocationSharingUser();
+
 
     NotificationManager mNotificationManager;
 
@@ -29,9 +46,13 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
             super.onMessageReceived(remoteMessage);
 
-            title=remoteMessage.getData().get("title");
-            message=remoteMessage.getData().get("message");
-            senderEmail = remoteMessage.getData().get("userId");
+        String title = remoteMessage.getData().get("title");
+        String message = remoteMessage.getData().get("message");
+        String senderEmail = remoteMessage.getData().get("email");
+            userRepository = new UserRepository(getApplication());
+            addUserToDb(senderEmail);
+
+
 
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
@@ -85,6 +106,34 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
 
 // notificationId is a unique int for each notification that you must define
         mNotificationManager.notify(100, builder.build());
+
+    }
+
+    public void addUserToDb(String senderEmail)
+    {
+        DatabaseReference databaseReference;
+
+
+        databaseReference= FirebaseDatabase.getInstance().getReference("Users");
+        Query query= databaseReference.orderByChild("email").equalTo(senderEmail);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot dataSnapshot:snapshot.getChildren())
+                {
+                    user= dataSnapshot.getValue(LocationSharingUser.class);
+                    userRepository.insertUser(user);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Add User: "," "+error.getMessage());
+
+            }
+        });
 
     }
 
