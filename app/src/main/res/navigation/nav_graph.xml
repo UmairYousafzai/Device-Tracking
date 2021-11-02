@@ -38,7 +38,15 @@
         android:id="@+id/assigned_user"
         android:name="com.example.devicetracker.AssignedUsersFragment"
         android:label="fragment_assigned_users"
-        tools:layout="@layout/fragment_assigned_users" />
+        tools:layout="@layout/fragment_assigned_users" >
+        <action
+            android:id="@+id/action_assigned_user_to_mapsFragment"
+            app:destination="@id/mapsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
     <fragment
         android:id="@+id/add_user"
         android:name="com.example.devicetracker.AddUserFragment"
@@ -64,10 +72,21 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splashFragment_to_location_request"
+            app:destination="@id/location_request" />
+        <action
+            android:id="@+id/action_splashFragment_to_add_user"
+            app:destination="@id/add_user" />
     </fragment>
     <fragment
         android:id="@+id/location_request"
         android:name="com.example.devicetracker.LocationRequestsFragment"
         android:label="fragment_location_requests"
         tools:layout="@layout/fragment_location_requests" />
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.example.devicetracker.MapsFragment"
+        android:label="fragment_maps"
+        tools:layout="@layout/fragment_maps" />
 </navigation>

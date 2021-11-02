@@ -24,28 +24,23 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class LocationService extends Service {
     private DatabaseReference databaseReference;
-    CustomLocation customLocation ;
+    CustomLocation customLocation;
 
     public LocationService() {
-    }
 
+    }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         customLocation = new CustomLocation(this);
-        if (intent!=null)
-        {
+        if (intent != null) {
             String action = intent.getAction();
-            if (action!=null)
-            {
-                if (action.equals(CONSTANTS.ACTION_START_LOCATION_SERVICE))
-                {
-
+            if (action != null) {
+                if (action.equals(CONSTANTS.ACTION_START_LOCATION_SERVICE)) {
                     showNotification();
                 }
-                if (action.equals(CONSTANTS.ACTION_STOP_LOCATION_SERVICE))
-                {
+                if (action.equals(CONSTANTS.ACTION_STOP_LOCATION_SERVICE)) {
                     customLocation.stopLocationUpdates();
                     stopForeground(true);
                     stopSelf();
@@ -53,7 +48,7 @@ public class LocationService extends Service {
             }
         }
 
-        return super.onStartCommand(intent,flags,startId);
+        return super.onStartCommand(intent, flags, startId);
 
     }
 
@@ -70,13 +65,13 @@ public class LocationService extends Service {
 
 
     private void showNotification() {
-        FirebaseAuth auth= FirebaseAuth.getInstance();
-        databaseReference= FirebaseDatabase.getInstance().getReference("Users").child(auth.getUid()).child("lastLocation");
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(auth.getUid()).child("lastLocation");
 
 
-        NotificationCompat.Builder builder=new NotificationCompat.Builder(this,"channelId");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channelId");
 
- ;
+        ;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder.setSmallIcon(R.drawable.ic_tracking_track_svgrepo_com);
         } else {
@@ -84,17 +79,12 @@ public class LocationService extends Service {
         }
 
 
-
         builder.setSmallIcon(R.drawable.ic_tracking_track_svgrepo_com)
                 .setContentText("This is service notificaion")
                 .setContentTitle("Title");
 
 
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "Your_channel_id";
             NotificationChannel channel = new NotificationChannel(
                     channelId,
@@ -104,18 +94,17 @@ public class LocationService extends Service {
         }
 
 
-
 // notificationId is a unique int for each notification that you must define
 
-        Notification notification=builder.build();
-        CustomLocation.CustomLocationResults locationResults= new CustomLocation.CustomLocationResults() {
+        Notification notification = builder.build();
+        CustomLocation.CustomLocationResults locationResults = new CustomLocation.CustomLocationResults() {
             @Override
             public void gotLocation(Location location) {
                 String locationString = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
                 databaseReference.setValue(locationString).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.e("Location :",locationString);
+                        Log.e("Location :", locationString);
 
                     }
                 });
@@ -124,7 +113,7 @@ public class LocationService extends Service {
         };
         customLocation.getLastLocation(locationResults);
 
-        startForeground(123,notification);
+        startForeground(123, notification);
 
     }
 

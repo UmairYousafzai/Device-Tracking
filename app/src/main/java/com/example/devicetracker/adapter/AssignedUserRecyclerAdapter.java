@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +34,7 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
     public AssignedUserRecyclerAdapter(Context context) {
         userList = new ArrayList<>();
         this.context = context;
-        mAuth= FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -82,28 +83,61 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
             mBinding.btnTrack.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final boolean[] isRequestAccepted = {false};
+
                     if (getAdapterPosition() != RecyclerView.NO_POSITION) {
                         User user = userList.get(getAdapterPosition());
-                        String senderUserEmail= Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-                        String message= Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName()+" Want To Access Your Live Location.";
-                        sendNoticationClass.UpdateToken();
-                        FirebaseDatabase.getInstance().getReference().child("Tokens").child(user.getId()).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                String receiverUserToken = dataSnapshot.getValue(String.class);
 
-                                sendNoticationClass.sendNotifications(receiverUserToken,senderUserEmail, "Device Tracker", message, context);
-                            }
+                        FirebaseDatabase.getInstance().getReference("Users").child(user.getId()).child("requestAccepted")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        isRequestAccepted[0] = snapshot.getValue(Boolean.class);
+                                        if (isRequestAccepted[0]) {
+                                            sendNotification(user);
 
-                            }
-                        });
+                                        } else {
+                                            Toast.makeText(context, "Permission from user is pending.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
+
                     }
 
                 }
             });
+
+
         }
+
+        public void sendNotification(User user)
+        {
+
+            String senderUserEmail = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+            String message = Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName() + " Want To Access Your Live Location.";
+            sendNoticationClass.UpdateToken();
+            FirebaseDatabase.getInstance().getReference().child("Tokens").child(user.getId()).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    String receiverUserToken = dataSnapshot.getValue(String.class);
+
+                    sendNoticationClass.sendNotifications(receiverUserToken, senderUserEmail, "Device Tracker", message, context);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+
     }
 }

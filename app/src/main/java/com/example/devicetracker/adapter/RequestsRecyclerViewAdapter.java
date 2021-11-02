@@ -104,6 +104,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
 
                         Map<String,String> data = new HashMap<>();
                         data.put("IsLocationSharing",String.valueOf(1));
+                        databaseReference.child(user.getId()).child("")
 
                         databaseReference.child(user.getId()).child("assignedUser").child(auth.getUid()).child("IsLocationSharing").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
