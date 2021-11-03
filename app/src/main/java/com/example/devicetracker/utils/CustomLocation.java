@@ -30,8 +30,7 @@ import java.util.TimerTask;
 public class CustomLocation {
     private Context mContext;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private final Location[] location = new Location[1];
-    private Timer timer;
+
     private CustomLocationResults customLocationResults;
     private LocationCallback mLocationCallback = new LocationCallback() {
 
@@ -63,7 +62,7 @@ public class CustomLocation {
 
 
 
-    private boolean isLocationEnabled() {
+    public boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
@@ -82,8 +81,8 @@ public class CustomLocation {
                     // object with appropriate methods
                     LocationRequest mLocationRequest = new LocationRequest();
                     mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                    mLocationRequest.setInterval(400);
-                    mLocationRequest.setFastestInterval(200);
+                    mLocationRequest.setInterval(4000);
+                    mLocationRequest.setFastestInterval(4000);
 
                     // setting LocationRequest
                     // on FusedLocationClient
@@ -96,7 +95,7 @@ public class CustomLocation {
     }
     public void stopLocationUpdates()
     {
-        fusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        LocationServices.getFusedLocationProviderClient(mContext).removeLocationUpdates(mLocationCallback);
     }
 
 

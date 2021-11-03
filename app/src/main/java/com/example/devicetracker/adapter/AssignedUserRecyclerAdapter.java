@@ -7,8 +7,13 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.devicetracker.AssignedUsersFragmentDirections;
 import com.example.devicetracker.Notification.SendNoticationClass;
 import com.example.devicetracker.databinding.UserCardBinding;
 import com.example.devicetracker.models.User;
@@ -27,14 +32,16 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
 
     private LayoutInflater layoutInflater;
     public List<User> userList;
-    private Context context;
-    private SendNoticationClass sendNoticationClass = new SendNoticationClass();
-    private FirebaseAuth mAuth;
+    private final Context context;
+    private final SendNoticationClass sendNoticationClass = new SendNoticationClass();
+    private final FirebaseAuth mAuth;
+    private Fragment fragment;
 
-    public AssignedUserRecyclerAdapter(Context context) {
+    public AssignedUserRecyclerAdapter(Context context,Fragment fragment) {
         userList = new ArrayList<>();
         this.context = context;
         mAuth = FirebaseAuth.getInstance();
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -80,7 +87,7 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
             mBinding = binding;
 
 
-            mBinding.btnTrack.setOnClickListener(new View.OnClickListener() {
+            mBinding.btnSendRequest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final boolean[] isRequestAccepted = {false};
@@ -94,11 +101,11 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
                                     public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                                         isRequestAccepted[0] = snapshot.getValue(Boolean.class);
-                                        if (isRequestAccepted[0]) {
+                                        if (!isRequestAccepted[0]) {
                                             sendNotification(user);
 
                                         } else {
-                                            Toast.makeText(context, "Permission from user is pending.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "Location Request Already send", Toast.LENGTH_SHORT).show();
                                         }
                                     }
 
@@ -113,29 +120,76 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
 
                 }
             });
+            mBinding.btnTrack.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        final boolean[] isRequestAccepted = {false};
+
+                        User user = userList.get(getAdapterPosition());
+
+                        FirebaseDatabase.getInstance().getReference("Users").child(user.getId()).child("requestAccepted")
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                                        isRequestAccepted[0] = snapshot.getValue(Boolean.class);
+                                        if (isRequestAccepted[0]) {
+                                            NavController navController= NavHostFragment.findNavController(fragment);
+                                            AssignedUsersFragmentDirections.ActionAssignedUserToMapsFragment action = AssignedUsersFragmentDirections.actionAssignedUserToMapsFragment();
+                                            action.setRequestedUserID(user.getId());
+                                            navController.navigate(action);
+
+                                        } else {
+                                            Toast.makeText(context, "Please Send Location Request First", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                    }
+
+                }
+            });
 
 
         }
 
-        public void sendNotification(User user)
-        {
+        public void sendNotification(User user) {
 
-            String senderUserEmail = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
-            String message = Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName() + " Want To Access Your Live Location.";
-            sendNoticationClass.UpdateToken();
-            FirebaseDatabase.getInstance().getReference().child("Tokens").child(user.getId()).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("Users").child(mAuth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String receiverUserToken = dataSnapshot.getValue(String.class);
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User senderUser=new User();
+                    senderUser= snapshot.getValue(User.class);
+                    String senderUserEmail = Objects.requireNonNull(mAuth.getCurrentUser()).getEmail();
+                    String message = senderUser.getUserName()+ " Want To Access Your Live Location.";
+                    sendNoticationClass.UpdateToken();
+                    FirebaseDatabase.getInstance().getReference().child("Tokens").child(user.getId()).child("token").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            String receiverUserToken = dataSnapshot.getValue(String.class);
 
-                    sendNoticationClass.sendNotifications(receiverUserToken, senderUserEmail, "Device Tracker", message, context);
+                            sendNoticationClass.sendNotifications(receiverUserToken, senderUserEmail, "Device Tracker", message, context);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
+
+
         }
 
 

@@ -113,27 +113,32 @@ public class MyFireBaseMessagingService extends FirebaseMessagingService {
     {
         DatabaseReference databaseReference;
 
+        if (!userRepository.isUserExists(senderEmail))
+        {
 
-        databaseReference= FirebaseDatabase.getInstance().getReference("Users");
-        Query query= databaseReference.orderByChild("email").equalTo(senderEmail);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            databaseReference= FirebaseDatabase.getInstance().getReference("Users");
+            Query query= databaseReference.orderByChild("email").equalTo(senderEmail);
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                for (DataSnapshot dataSnapshot:snapshot.getChildren())
-                {
-                    user= dataSnapshot.getValue(LocationSharingUser.class);
-                    userRepository.insertUser(user);
+                    for (DataSnapshot dataSnapshot:snapshot.getChildren())
+                    {
+                        user= dataSnapshot.getValue(LocationSharingUser.class);
+                        userRepository.insertUser(user);
+                    }
+
                 }
 
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("Add User: "," "+error.getMessage());
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Add User: "," "+error.getMessage());
+                }
+            });
+        }
 
-            }
-        });
+
 
     }
 

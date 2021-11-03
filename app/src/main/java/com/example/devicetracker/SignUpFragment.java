@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.devicetracker.Notification.Token;
 import com.example.devicetracker.databinding.FragmentSignUpBinding;
 import com.example.devicetracker.models.AssignedUser;
 import com.example.devicetracker.models.User;
@@ -26,7 +27,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +46,8 @@ public class SignUpFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = FragmentSignUpBinding.inflate(inflater,container,false);
-        BottomNavigationView bottomNavigationView= requireActivity().findViewById(R.id.bottom_view);
+        mBinding = FragmentSignUpBinding.inflate(inflater, container, false);
+        BottomNavigationView bottomNavigationView = requireActivity().findViewById(R.id.bottom_view);
         bottomNavigationView.setVisibility(View.GONE);
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
 
@@ -60,7 +63,7 @@ public class SignUpFragment extends Fragment {
         navController = NavHostFragment.findNavController(this);
         btnListener();
         dialog = new ProgressDialog(requireContext());
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(ResourcesCompat.getColor(getResources(),R.color.primaryAppColor,null)));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(ResourcesCompat.getColor(getResources(), R.color.primaryAppColor, null)));
         dialog.setMessage("Creating...");
         dialog.setCancelable(false);
 
@@ -79,57 +82,66 @@ public class SignUpFragment extends Fragment {
 
     private void addUserToFirebase() {
 
-        String email= Objects.requireNonNull(mBinding.EditTextEmail.getText()).toString();
-        String password= Objects.requireNonNull(mBinding.EditTextPassword.getText()).toString();
-        String userName= Objects.requireNonNull(mBinding.EditTextUsername.getText()).toString();
+        String email = Objects.requireNonNull(mBinding.EditTextEmail.getText()).toString();
+        String password = Objects.requireNonNull(mBinding.EditTextPassword.getText()).toString();
+        String userName = Objects.requireNonNull(mBinding.EditTextUsername.getText()).toString();
         String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
-        if (email.matches(emailPattern))
-        {
-            if (password.length()>=6) {
-                mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        if (email.matches(emailPattern)) {
+            if (password.length() >= 6) {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        if (task.isSuccessful())
-                        {
-                            List<AssignedUser> list= new ArrayList<>();
+                        if (task.isSuccessful()) {
+                            List<AssignedUser> list = new ArrayList<>();
 
-                            User user= new User(mAuth.getUid(),email,password," ",userName);
+                            User user = new User(mAuth.getUid(), email, password, " ", userName);
                             mDatabase.getReference().child("Users").child(Objects.requireNonNull(mAuth.getUid())).setValue(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(requireContext(), "SignUp Successful", Toast.LENGTH_SHORT).show();
-                                    navController.popBackStack();
-                                    dialog.dismiss();
+                                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                                    if (firebaseUser != null) {
+                                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<String> task) {
+                                                String refreshToken = task.getResult();
+                                                updateToken(refreshToken);
+                                                Toast.makeText(requireContext(), "SignUp Successful", Toast.LENGTH_SHORT).show();
+                                                navController.popBackStack();
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                    }
+
                                 }
                             });
 
-                        }
-                        else
-                        {
+                        } else {
                             dialog.dismiss();
-                            Toast.makeText(requireContext(), " "+task.getException(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), " " + task.getException(), Toast.LENGTH_SHORT).show();
                         }
 
 
                     }
                 });
-            }
-            else {
+            } else {
                 mBinding.TextInputPassword.setError("Password Is Short");
                 dialog.dismiss();
 
             }
 
-        }
-        else
-        {
+        } else {
             mBinding.TextInputEmail.setError("Enter Valid Email");
         }
 
 
-
     }
 
+    private void updateToken(String refreshToken) {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Token token1 = new Token(refreshToken);
+        FirebaseDatabase.getInstance().getReference("Tokens").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(token1);
+    }
 }

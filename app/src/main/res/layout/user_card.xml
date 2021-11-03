@@ -56,6 +56,18 @@
                     android:layout_marginBottom="5dp"
                     />
                 <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_send_request"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_location_point_svgrepo_com"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintEnd_toStartOf="@id/btn_track"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_margin="20dp"
+                    android:tooltipText="Send Location Request"
+                    />
+                <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_track"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,6 +77,8 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_margin="20dp"
+                    android:tooltipText="Track User"
+
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

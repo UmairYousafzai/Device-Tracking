@@ -101,7 +101,7 @@ public class AssignedUsersFragment extends Fragment {
     private void setUpRecyclerView() {
 
         mbinding.userRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter= new AssignedUserRecyclerAdapter(requireContext());
+        adapter= new AssignedUserRecyclerAdapter(requireContext(),this);
         mbinding.userRecyclerView.setAdapter(adapter);
 
     }

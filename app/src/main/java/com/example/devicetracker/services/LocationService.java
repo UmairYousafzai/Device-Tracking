@@ -1,22 +1,31 @@
 package com.example.devicetracker.services;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.example.devicetracker.R;
 import com.example.devicetracker.utils.CONSTANTS;
 import com.example.devicetracker.utils.CustomLocation;
+import com.example.devicetracker.utils.Permission;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -25,11 +34,37 @@ import com.google.firebase.database.FirebaseDatabase;
 public class LocationService extends Service {
     private DatabaseReference databaseReference;
     CustomLocation customLocation;
+    private LocationCallback mLocationCallback = new LocationCallback() {
 
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            if (locationResult!=null)
+            {
+                databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getUid()).child("lastLocation");
+                Location location = locationResult.getLastLocation();
+                String locationString = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
+                databaseReference.setValue(locationString).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e("Location :", locationString);
+
+                    }
+                });
+
+            }
+
+        }
+    };
     public LocationService() {
 
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Log.e("service : ","on create");
+
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -41,7 +76,7 @@ public class LocationService extends Service {
                     showNotification();
                 }
                 if (action.equals(CONSTANTS.ACTION_STOP_LOCATION_SERVICE)) {
-                    customLocation.stopLocationUpdates();
+                    stopLocationUpdates();
                     stopForeground(true);
                     stopSelf();
                 }
@@ -55,6 +90,7 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("service : ","on destroy");
     }
 
     @Override
@@ -65,8 +101,7 @@ public class LocationService extends Service {
 
 
     private void showNotification() {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(auth.getUid()).child("lastLocation");
+
 
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "channelId");
@@ -97,24 +132,31 @@ public class LocationService extends Service {
 // notificationId is a unique int for each notification that you must define
 
         Notification notification = builder.build();
-        CustomLocation.CustomLocationResults locationResults = new CustomLocation.CustomLocationResults() {
-            @Override
-            public void gotLocation(Location location) {
-                String locationString = String.valueOf(location.getLatitude()) + "," + String.valueOf(location.getLongitude());
-                databaseReference.setValue(locationString).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.e("Location :", locationString);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (customLocation.isLocationEnabled()) {
 
-                    }
-                });
+                // Initializing LocationRequest
+                // object with appropriate methods
+                LocationRequest mLocationRequest = new LocationRequest();
+                mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                mLocationRequest.setInterval(4000);
+                mLocationRequest.setFastestInterval(4000);
 
+                // setting LocationRequest
+                // on FusedLocationClient
+                LocationServices.getFusedLocationProviderClient(this)
+                        .requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
             }
-        };
-        customLocation.getLastLocation(locationResults);
+        }
+        else {
+            Toast.makeText(this, "Please Allow Permission Access in App Setting.", Toast.LENGTH_SHORT).show();
+        }
 
         startForeground(123, notification);
 
     }
-
+    public void stopLocationUpdates()
+    {
+        LocationServices.getFusedLocationProviderClient(this).removeLocationUpdates(mLocationCallback);
+    }
 }

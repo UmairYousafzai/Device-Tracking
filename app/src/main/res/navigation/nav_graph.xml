@@ -88,5 +88,11 @@
         android:id="@+id/mapsFragment"
         android:name="com.example.devicetracker.MapsFragment"
         android:label="fragment_maps"
-        tools:layout="@layout/fragment_maps" />
+        tools:layout="@layout/fragment_maps" >
+        <argument
+            android:name="requestedUserID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue=" "/>
+    </fragment>
 </navigation>

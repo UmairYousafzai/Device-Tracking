@@ -36,5 +36,6 @@ public interface DeviceTrackerDao {
 
     @Query("Select *From LocationSharingUser")
     LiveData<List<LocationSharingUser>> getAllUser();
-
+    @Query("Select Exists (Select *from LocationSharingUser where email= :email)")
+    boolean isUserExists(String email);
 }

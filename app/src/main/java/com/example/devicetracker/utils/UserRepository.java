@@ -18,6 +18,7 @@ import com.example.devicetracker.models.User;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 public class UserRepository {
 
@@ -65,6 +66,10 @@ public class UserRepository {
         });
     }
 
+    public boolean isUserExists(String email)
+    {
+        return mDao.isUserExists(email);
+    }
     public LiveData<List<LocationSharingUser>> getAllUser()
     {
         return allUsers;
