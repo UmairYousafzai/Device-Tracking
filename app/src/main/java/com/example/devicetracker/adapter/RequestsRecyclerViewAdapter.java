@@ -1,8 +1,11 @@
 package com.example.devicetracker.adapter;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +26,7 @@ import com.example.devicetracker.models.LocationSharingUser;
 import com.example.devicetracker.models.User;
 import com.example.devicetracker.services.LocationService;
 import com.example.devicetracker.utils.CONSTANTS;
+import com.example.devicetracker.utils.Permission;
 import com.example.devicetracker.utils.UserRepository;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,9 +51,10 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
     private Context context;
     private LocationSharingUser user = new LocationSharingUser();
     private ProgressDialog progressDialog ;
+    private Activity activity;
 
 
-    public RequestsRecyclerViewAdapter(Context context) {
+    public RequestsRecyclerViewAdapter(Context context, Activity activity) {
         userList = new ArrayList<>();
         this.context = context;
         progressDialog= new ProgressDialog(context);
@@ -56,6 +62,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
         progressDialog.setCancelable(false);
         progressDialog.getWindow().
                 setBackgroundDrawable(new ColorDrawable(ResourcesCompat.getColor(context.getResources(), R.color.primaryAppColor,null)));
+        this.activity = activity;
     }
 
     @NonNull
@@ -116,40 +123,56 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
             mBinding.btnDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-
-                    if (getAdapterPosition() != RecyclerView.NO_POSITION) {
-                        progressDialog.show();
-                        user = userList.get(getAdapterPosition());
-                        databaseReference.child(auth.getUid()).child("requestAccepted").setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                databaseReference.child(user.getId()).child("assignedUser").child(auth.getUid()).child("IsLocationSharing").setValue(1)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    Permission permission = new Permission(context,activity);
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    {
+                        if (permission.isLocationEnabled())
+                        {
+                            if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                                progressDialog.show();
+                                user = userList.get(getAdapterPosition());
+                                databaseReference.child(Objects.requireNonNull(auth.getUid())).child("requestAccepted").setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Intent intent = new Intent(context, LocationService.class);
-                                        intent.setAction(CONSTANTS.ACTION_START_LOCATION_SERVICE);
-                                        context.startService(intent);
+                                        databaseReference.child(user.getId()).child("assignedUser").child(auth.getUid()).child("IsLocationSharing").setValue(1)
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Intent intent = new Intent(context, LocationService.class);
+                                                        intent.setAction(CONSTANTS.ACTION_START_LOCATION_SERVICE);
+                                                        context.startService(intent);
 
-                                        Toast.makeText(context, "Location Sharing Enable", Toast.LENGTH_SHORT).show();
-                                        mBinding.btnDone.setVisibility(View.GONE);
-                                        progressDialog.dismiss();
+                                                        Toast.makeText(context, "Location Sharing Enable", Toast.LENGTH_SHORT).show();
+                                                        mBinding.btnDone.setVisibility(View.GONE);
+                                                        progressDialog.dismiss();
+                                                    }
+
+
+                                                });
                                     }
-
-
+                                }).addOnCanceledListener(new OnCanceledListener() {
+                                    @Override
+                                    public void onCanceled() {
+                                        progressDialog.dismiss();
+                                        Toast.makeText(context, "Enable to start location service", Toast.LENGTH_SHORT).show();
+                                    }
                                 });
-                            }
-                        }).addOnCanceledListener(new OnCanceledListener() {
-                            @Override
-                            public void onCanceled() {
-                                progressDialog.dismiss();
-                                Toast.makeText(context, "Enable to start location service", Toast.LENGTH_SHORT).show();
-                            }
-                        });
 
 
+                            }
+                        }
+                        else
+                        {
+                            permission.showOpenLocationSettingDialog();
+                        }
                     }
+                    else
+                    {
+                        permission.getLocationPermission();
+                    }
+
+
+
                     }
 
 

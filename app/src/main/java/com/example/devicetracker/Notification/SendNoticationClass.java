@@ -46,6 +46,8 @@ public class SendNoticationClass {
 
         JsonObject payload = new JsonObject();
         payload.addProperty("to", usertoken);
+        payload.addProperty("priority","high");
+
         // compose data payload here
         JsonObject data = new JsonObject();
         data.addProperty("title", title);

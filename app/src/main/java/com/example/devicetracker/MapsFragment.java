@@ -109,7 +109,6 @@ public class MapsFragment extends Fragment {
                         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                                 .clickable(true)
                                 .addAll(latLngList).color(getResources().getColor(R.color.blue)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngList.get(latLngList.size()-1),17.0f));
 
                     }
                     couter++;

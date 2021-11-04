@@ -8,19 +8,27 @@
         android:title="@string/assigned_user"
         android:icon="@drawable/ic_baseline_supervised_user_circle_24"
         android:iconTint="@color/secondaryAppColor"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/add_user"
-        android:title="Add User"
+        android:title="@string/add_user"
         android:icon="@drawable/ic_add_user_svgrepo_com"
         android:iconTint="@color/secondaryAppColor"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
         />
     <item
         android:id="@+id/location_request"
-        android:title="Add User"
+        android:title="@string/location_requests"
         android:icon="@drawable/ic_list_svgrepo_com"
+        android:iconTint="@color/secondaryAppColor"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/chats"
+        android:title="@string/chat"
+        android:icon="@drawable/ic_baseline_chat_24"
         android:iconTint="@color/secondaryAppColor"
         app:showAsAction="always"
         />

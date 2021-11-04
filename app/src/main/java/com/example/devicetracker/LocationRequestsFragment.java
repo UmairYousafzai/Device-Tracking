@@ -61,7 +61,7 @@ public class LocationRequestsFragment extends Fragment {
 
         mBinding.locationRequestRecycler.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter= new RequestsRecyclerViewAdapter(requireContext());
+        adapter= new RequestsRecyclerViewAdapter(requireContext(),requireActivity());
         mBinding.locationRequestRecycler.setAdapter(adapter);
     }
 }

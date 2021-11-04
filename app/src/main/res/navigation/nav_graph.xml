@@ -74,10 +74,25 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_splashFragment_to_location_request"
-            app:destination="@id/location_request" />
+            app:destination="@id/location_request"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/action_splashFragment_to_add_user"
-            app:destination="@id/add_user" />
+            app:destination="@id/add_user"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_splashFragment_to_chatUserListFragment"
+            app:destination="@id/chats"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
     <fragment
         android:id="@+id/location_request"
@@ -91,6 +106,26 @@
         tools:layout="@layout/fragment_maps" >
         <argument
             android:name="requestedUserID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue=" "/>
+    </fragment>
+    <fragment
+        android:id="@+id/chats"
+        android:name="com.example.devicetracker.Message.ChatUserListFragment"
+        android:label="ChatUserListFragment"
+        tools:layout="@layout/fragment_chat_user_list">
+        <action
+            android:id="@+id/action_chats_to_chatFragment"
+            app:destination="@id/chatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.devicetracker.Message.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" >
+        <argument
+            android:name="recevierID"
             app:argType="string"
             app:nullable="true"
             android:defaultValue=" "/>
