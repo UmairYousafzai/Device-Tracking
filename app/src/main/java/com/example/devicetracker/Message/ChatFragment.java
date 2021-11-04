@@ -90,6 +90,7 @@ public class ChatFragment extends Fragment {
 
                         }
                         adapter.setMessageList(messageList);
+                        mBinding.chatMessageRecyclerview.smoothScrollToPosition(messageList.size());
 
                     }
 
