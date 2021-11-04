@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.devicetracker.adapter.AssignedUserRecyclerAdapter;
 import com.example.devicetracker.databinding.FragmentAddUserBinding;
@@ -42,6 +44,7 @@ public class AssignedUsersFragment extends Fragment {
     private FirebaseAuth mAuth;
     private List<User> userList= new ArrayList<>();
     private ProgressDialog progressDialog;
+    private long pressedTime=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,6 +73,19 @@ public class AssignedUsersFragment extends Fragment {
         progressDialog.show();
         setUpRecyclerView();
         getAssignedUser();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (pressedTime + 2000 > System.currentTimeMillis()) {
+                    requireActivity().finish();
+                } else {
+                    Toast.makeText(requireContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+                }
+                pressedTime = System.currentTimeMillis();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
     }
 
     private void getAssignedUser() {

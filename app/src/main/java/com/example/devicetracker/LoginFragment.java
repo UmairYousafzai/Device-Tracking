@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +36,7 @@ public class LoginFragment extends Fragment {
     private FragmentLoginBinding mBinding;
     private FirebaseAuth mAuth;
     private ProgressDialog dialog;
+    private long pressedTime=0;
 
 
     @Override
@@ -60,6 +62,19 @@ public class LoginFragment extends Fragment {
 
         mAuth= FirebaseAuth.getInstance();
         btnListener();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (pressedTime + 2000 > System.currentTimeMillis()) {
+                    requireActivity().finish();
+                } else {
+                    Toast.makeText(requireContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+                }
+                pressedTime = System.currentTimeMillis();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
     }
 
     private void btnListener() {

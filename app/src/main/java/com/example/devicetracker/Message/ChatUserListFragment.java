@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -37,6 +38,7 @@ public class ChatUserListFragment extends Fragment {
     private List<AssignedUser> assignedUserList= new ArrayList<>();
     private ChatUserListAdapter adapter;
     private ProgressDialog progressDialog;
+    private long pressedTime=0;
 
 
 
@@ -59,6 +61,19 @@ public class ChatUserListFragment extends Fragment {
 
         getDataFromFireBase();
         setUpRecyclerView();
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (pressedTime + 2000 > System.currentTimeMillis()) {
+                    requireActivity().finish();
+                } else {
+                    Toast.makeText(requireContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+                }
+                pressedTime = System.currentTimeMillis();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
     }
 
     private void getDataFromFireBase() {

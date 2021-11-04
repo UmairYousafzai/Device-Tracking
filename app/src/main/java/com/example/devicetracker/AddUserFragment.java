@@ -2,6 +2,7 @@ package com.example.devicetracker;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.devicetracker.databinding.FragmentAddUserBinding;
 import com.example.devicetracker.models.AssignedUser;
@@ -40,7 +42,8 @@ public class AddUserFragment extends Fragment {
     private FirebaseAuth mAuth;
     private User user= new User();
     private User currentUser= new User();
-    List<AssignedUser> assignedUser= new ArrayList<>();
+    private List<AssignedUser> assignedUser= new ArrayList<>();
+    private long pressedTime=0;
 
 
     @Override
@@ -66,6 +69,19 @@ public class AddUserFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mBinding.addUserLayout.parentLayout.setVisibility(View.GONE);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (pressedTime + 2000 > System.currentTimeMillis()) {
+                    requireActivity().finish();
+                } else {
+                    Toast.makeText(requireContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+                }
+                pressedTime = System.currentTimeMillis();
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
     }
 
     private void btnListener() {
