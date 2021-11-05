@@ -115,8 +115,8 @@ public class LocationService extends Service {
 
 
         builder.setSmallIcon(R.drawable.ic_tracking_track_svgrepo_com)
-                .setContentText("This is service notificaion")
-                .setContentTitle("Title");
+                .setContentText("Location Sharing Is Enable ")
+                .setContentTitle("Location");
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

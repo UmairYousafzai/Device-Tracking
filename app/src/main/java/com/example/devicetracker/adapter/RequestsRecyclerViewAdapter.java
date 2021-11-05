@@ -124,7 +124,7 @@ public class RequestsRecyclerViewAdapter extends RecyclerView.Adapter<RequestsRe
                 @Override
                 public void onClick(View v) {
                     Permission permission = new Permission(context,activity);
-                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                     {
                         if (permission.isLocationEnabled())
                         {

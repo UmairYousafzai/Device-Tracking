@@ -21,6 +21,9 @@
     <string name="running">Running</string>
     <string name="chat">Chats</string>
     <string name="type_message_here">Type message here...</string>
+    <string name="current_location">Current Location :</string>
+    <string name="distance_covered_2_8km">Distance Covered :</string>
+    <string name="cancel">Cancel</string>
 
 
 </resources>

@@ -8,11 +8,13 @@ import androidx.fragment.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.devicetracker.databinding.FragmentMapsBinding;
 import com.example.devicetracker.utils.CustomLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,15 +37,16 @@ import java.util.List;
 public class MapsFragment extends Fragment {
     private GoogleMap mMap;
     private CustomLocation customLocation;
-    private List<LatLng> latLngList= new ArrayList<>();
-    int couter=0;
+    private List<LatLng> latLngList = new ArrayList<>();
+    int couter = 0;
+    private FragmentMapsBinding mBinding;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            mMap=googleMap;
+            mMap = googleMap;
 //            LatLng sydney = new LatLng(-34, 151);
 //            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
@@ -55,7 +58,8 @@ public class MapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_maps, container, false);
+        mBinding = FragmentMapsBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -70,9 +74,9 @@ public class MapsFragment extends Fragment {
     }
 
     private void getLocationFromFireBase() {
-        customLocation= new CustomLocation(requireContext());
+        customLocation = new CustomLocation(requireContext());
 
-        String requestedUserID= MapsFragmentArgs.fromBundle(getArguments()).getRequestedUserID();
+        String requestedUserID = MapsFragmentArgs.fromBundle(getArguments()).getRequestedUserID();
         FirebaseDatabase.getInstance().getReference("Users").child(requestedUserID).child("lastLocation").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -82,50 +86,77 @@ public class MapsFragment extends Fragment {
 //                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker,15.0f));
                 String location = snapshot.getValue(String.class);
 
-                if (location!=null&&location.length()>0)
-                {
+                if (location != null && location.length() > 0) {
                     mMap.clear();
 
                     String[] locationString = location.split(",");
                     LatLng marker = new LatLng(Double.parseDouble(locationString[0]), Double.parseDouble(locationString[1]));
-                    if (couter<=1)
-                    {
-                        String address= customLocation.getCompleteAddressString(Double.parseDouble(locationString[0]), Double.parseDouble(locationString[1]));
+                    if (couter <= 1) {
+                        String address = customLocation.getCompleteAddressString(Double.parseDouble(locationString[0]), Double.parseDouble(locationString[1]));
                         mMap.addMarker(new MarkerOptions().position(marker).title(address).icon(BitmapFromVector(R.drawable.current_location)));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker,17.0f));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker, 17.0f));
+                        latLngList.add(marker);
+                        couter++;
+                    } else {
                         latLngList.add(marker);
 
                     }
-                    else {
-                        latLngList.add(marker);
 
-                    }
+                    if (latLngList != null && latLngList.size() > 2) {
 
-                    if (latLngList!=null&&latLngList.size()>2)
-                    {
-                        String address= customLocation.getCompleteAddressString(Double.parseDouble(locationString[0]), Double.parseDouble(locationString[1]));
-                        mMap.addMarker(new MarkerOptions().position(latLngList.get(latLngList.size()-1)).title(address).icon(BitmapFromVector(R.drawable.current_location)));
+
+                        String distance = calculateDistance(latLngList.get(latLngList.size() - 1), latLngList.get(0));
+                        if (distance != null) {
+                            mBinding.distance.setText(distance);
+                        }
+                        String address = customLocation.getCompleteAddressString(Double.parseDouble(locationString[0]), Double.parseDouble(locationString[1]));
+                        mBinding.tvAddress.setText(address);
+                        mMap.addMarker(new MarkerOptions().position(latLngList.get(latLngList.size() - 1)).title(address).icon(BitmapFromVector(R.drawable.current_location)));
 
                         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                                 .clickable(true)
                                 .addAll(latLngList).color(getResources().getColor(R.color.blue)));
 
                     }
-                    couter++;
+
                 }
-
-
 
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
 
 
+    }
+
+    public String calculateDistance(LatLng currentLatLng, LatLng startingLatLng) {
+
+        double distanc1=0;
+
+        for (int i =0 ; i<latLngList.size()-1;i++)
+        {
+            Location currentLocation = new Location(""), startingLocation = new Location("");
+            currentLocation.setLongitude(latLngList.get(i+1).longitude);
+            currentLocation.setLatitude(latLngList.get(i+1).latitude);
+
+            startingLocation.setLatitude(latLngList.get(i).latitude);
+            startingLocation.setLongitude(latLngList.get(i).longitude);
+            distanc1= distanc1+ startingLocation.distanceTo(currentLocation);
+        }
+//        Location currentLocation = new Location(""), startingLocation = new Location("");
+//        currentLocation.setLongitude(currentLatLng.longitude);
+//        currentLocation.setLatitude(currentLatLng.latitude);
+//
+//        startingLocation.setLatitude(startingLatLng.latitude);
+//        startingLocation.setLongitude(startingLatLng.longitude);
+        String distance = String.valueOf(distanc1 / 1000);
+        distance = distance.substring(0,4);
+        distance = "Distance Covered: " + distance + " Km";
+
+        return distance;
 
     }
 

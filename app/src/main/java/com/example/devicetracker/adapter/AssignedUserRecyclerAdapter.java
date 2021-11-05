@@ -1,12 +1,15 @@
 package com.example.devicetracker.adapter;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
@@ -15,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.devicetracker.AssignedUsersFragmentDirections;
 import com.example.devicetracker.Notification.SendNoticationClass;
+import com.example.devicetracker.R;
 import com.example.devicetracker.databinding.UserCardBinding;
 import com.example.devicetracker.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,12 +40,18 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
     private final SendNoticationClass sendNoticationClass = new SendNoticationClass();
     private final FirebaseAuth mAuth;
     private Fragment fragment;
+    private ProgressDialog progressDialog;
 
     public AssignedUserRecyclerAdapter(Context context,Fragment fragment) {
         userList = new ArrayList<>();
         this.context = context;
         mAuth = FirebaseAuth.getInstance();
         this.fragment = fragment;
+        progressDialog= new ProgressDialog(context);
+        progressDialog.setMessage("Sending...");
+        progressDialog.setCancelable(false);
+        progressDialog.getWindow().
+                setBackgroundDrawable(new ColorDrawable(ResourcesCompat.getColor(context.getResources(), R.color.primaryAppColor,null)));
     }
 
     @NonNull
@@ -93,6 +103,7 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
                     final boolean[] isRequestAccepted = {false};
 
                     if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        progressDialog.show();
                         User user = userList.get(getAdapterPosition());
 
                         FirebaseDatabase.getInstance().getReference("Users").child(user.getId()).child("requestAccepted")
@@ -124,6 +135,7 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
                 @Override
                 public void onClick(View v) {
                     if (getAdapterPosition() != RecyclerView.NO_POSITION) {
+                        progressDialog.show();
                         final boolean[] isRequestAccepted = {false};
 
                         User user = userList.get(getAdapterPosition());
@@ -138,6 +150,7 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
                                             NavController navController= NavHostFragment.findNavController(fragment);
                                             AssignedUsersFragmentDirections.ActionAssignedUserToMapsFragment action = AssignedUsersFragmentDirections.actionAssignedUserToMapsFragment();
                                             action.setRequestedUserID(user.getId());
+                                            progressDialog.dismiss();
                                             navController.navigate(action);
 
                                         } else {
@@ -172,7 +185,7 @@ public class AssignedUserRecyclerAdapter extends RecyclerView.Adapter<AssignedUs
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             String receiverUserToken = dataSnapshot.getValue(String.class);
-
+                            progressDialog.dismiss();
                             sendNoticationClass.sendNotifications(receiverUserToken, senderUserEmail, "Device Tracker", message, context);
                         }
 
