@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="5dp"
         android:layout_marginHorizontal="10dp"
+
         xmlns:app="http://schemas.android.com/apk/res-auto">
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/chat_user_card"
@@ -38,7 +39,7 @@
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     android:textSize="18sp"
-                    android:layout_margin="20dp"
+                    android:layout_marginHorizontal="20dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -66,7 +67,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_margin="20dp"
+                    android:layout_marginHorizontal="20dp"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
 

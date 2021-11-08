@@ -41,7 +41,7 @@
             android:layout_marginBottom="20dp"
             android:orientation="horizontal"
             android:weightSum="10"
-            android:background="@color/secondaryAppColor">
+            android:background="@drawable/textview_bg">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/Text_Input_Email"

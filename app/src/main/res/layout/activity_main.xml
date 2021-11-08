@@ -44,6 +44,7 @@
         app:backgroundTint="@color/primaryAppColor"
         app:itemIconTint="@color/secondaryAppColor"
         app:itemTextColor="@color/secondaryAppColor"
+        app:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

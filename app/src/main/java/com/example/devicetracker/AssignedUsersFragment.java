@@ -95,7 +95,7 @@ public class AssignedUsersFragment extends Fragment {
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                userList.clear();
                 for (DataSnapshot snapshot1: snapshot.getChildren())
                 {
                     User user= snapshot1.getValue(User.class);

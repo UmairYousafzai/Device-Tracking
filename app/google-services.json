@@ -1,33 +1,34 @@
 {
   "project_info": {
-    "project_number": "971922302982",
-    "project_id": "device-tracking-be619",
-    "storage_bucket": "device-tracking-be619.appspot.com"
+    "project_number": "255694877905",
+    "firebase_url": "https://device-tracking-a7c11-default-rtdb.firebaseio.com",
+    "project_id": "device-tracking-a7c11",
+    "storage_bucket": "device-tracking-a7c11.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:971922302982:android:f6499d7fc199ff18e93b87",
+        "mobilesdk_app_id": "1:255694877905:android:1b30da43bd387eebf741f0",
         "android_client_info": {
           "package_name": "com.example.devicetracker"
         }
       },
       "oauth_client": [
         {
-          "client_id": "971922302982-kbupgdrdhgvdt35gsremkhrk2bvklfut.apps.googleusercontent.com",
+          "client_id": "255694877905-lsurr42euasvdnhm7c1uqq6cngl7ammv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAE1MoR76nQhFpeRNOhIDYrbThG_4_Hue0"
+          "current_key": "AIzaSyDziSAuT4arLeKk7_m9HMTpGRM08Qax4_Q"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "971922302982-kbupgdrdhgvdt35gsremkhrk2bvklfut.apps.googleusercontent.com",
+              "client_id": "255694877905-lsurr42euasvdnhm7c1uqq6cngl7ammv.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

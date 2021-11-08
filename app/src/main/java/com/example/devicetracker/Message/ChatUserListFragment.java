@@ -83,6 +83,7 @@ public class ChatUserListFragment extends Fragment {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        assignedUserList.clear();
                         for (DataSnapshot snapshot1: snapshot.getChildren())
                         {
                             AssignedUser user = snapshot1.getValue(AssignedUser.class);
