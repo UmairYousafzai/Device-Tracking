@@ -1,44 +1,59 @@
-**Device Tracking**
+# **Device Tracking**
 
 Device Tracking is a comprehensive Android application designed with a variety of essential functionalities, including real-time chat, user tracking, and location services. Built using Java, it leverages modern frameworks and libraries to provide a seamless user experience.
 
-**Features**
-Real-time Chat:
+## **Features**
 
-Instant messaging with friends and contacts.
-User-friendly chat interface with support for multimedia messages.
+###Real-time Chat:
 
-Chat User Listing:
+-Instant messaging with friends and contacts.
 
-View a list of all chat users.
-Easily start conversations with new users.
+-User-friendly chat interface with support for multimedia messages.
 
-User Tracking:
+## Chat User Listing:
 
-Track the location of users on a Google Map.
-Send requests to users to track their location.
+-View a list of all chat users.
 
-Location Services:
+-Easily start conversations with new users.
 
-Get user location using a foreground service.
-Display user locations in real-time on an integrated Google Map.
+### User Tracking:
 
-Technologies Used
+-Track the location of users on a Google Map.
 
-**Programming Language**: Java
+-Send requests to users to track their location.
 
-Frameworks & Libraries:
-Android SDK
-Firebase (Cloud Messaging, Realtime Database, Storage)
-Google Maps API
-Retrofit for API calls
-Architecture: MVVM, Clean Architecture
-Installation
-To get started with Device Tracking, follow these steps:
+###Location Services:
 
-Clone the repository:
+-Get user location using a foreground service.
+
+-Display user locations in real-time on an integrated Google Map.
+
+###Technologies Used
+
+-**Programming Language**: Java
+
+-**Frameworks & Libraries:**
+
+-Android SDK
+
+-Firebase (Cloud Messaging, Realtime Database, Storage)
+
+-Google Maps API
+
+-Retrofit for API calls
+
+-Architecture: MVVM, Clean Architecture
+
+###Installation
+
+-To get started with Device Tracking, follow these steps:
+
+**Clone the repository:**
+
 sh
+
 Copy code
+
 git clone https://github.com/UmairYousafzai/Device-Tracking.git
 
 Navigate to the project directory:
