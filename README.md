@@ -4,7 +4,7 @@ Device Tracking is a comprehensive Android application designed with a variety o
 
 ## **Features**
 
-###Real-time Chat:
+### Real-time Chat:
 
 -Instant messaging with friends and contacts.
 
@@ -22,13 +22,13 @@ Device Tracking is a comprehensive Android application designed with a variety o
 
 -Send requests to users to track their location.
 
-###Location Services:
+### Location Services:
 
 -Get user location using a foreground service.
 
 -Display user locations in real-time on an integrated Google Map.
 
-###Technologies Used
+### Technologies Used
 
 -**Programming Language**: Java
 
@@ -44,7 +44,7 @@ Device Tracking is a comprehensive Android application designed with a variety o
 
 -Architecture: MVVM, Clean Architecture
 
-###Installation
+### Installation
 
 -To get started with Device Tracking, follow these steps:
 
